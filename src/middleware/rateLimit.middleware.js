@@ -25,10 +25,7 @@ const limiter = rateLimit({
       retryAfter: Math.ceil(config.rateLimit.windowMs / 1000),
     });
   },
-  skip: (req) =>
-    // Skip rate limiting for health checks
-    req.path === '/health' || req.path === '/ready'
-  ,
+  skip: (req) => req.path === '/health' || req.path === '/ready', // Skip rate limiting for health checks
 });
 
 module.exports = limiter;

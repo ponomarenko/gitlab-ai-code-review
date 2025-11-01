@@ -178,7 +178,6 @@ class RAGService {
    */
   buildKnowledgeQuery(filePath, diff) {
     const fileName = filePath.split('/').pop();
-    const ext = fileName.split('.').pop();
 
     // Extract key patterns from diff
     const patterns = this.extractPatterns(diff);
@@ -255,6 +254,7 @@ class RAGService {
     } catch (error) {
       logger.error('Failed to get best practice', { topic, error: error.message });
       // Try local as fallback
+      // eslint-disable-next-line no-return-await
       return await localRAGService.getBestPractice(topic);
     }
   }

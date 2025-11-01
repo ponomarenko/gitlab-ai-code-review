@@ -5,7 +5,7 @@ describe('Helpers', () => {
     it('should retry function on failure', async () => {
       let attempts = 0;
       const fn = async () => {
-        attempts++;
+        attempts += 1;
         if (attempts < 3) throw new Error('Fail');
         return 'success';
       };

@@ -8,6 +8,7 @@ const { AppError } = require('../utils/errors');
 /**
  * Global error handler
  */
+// eslint-disable-next-line no-unused-vars
 function errorHandler(err, req, res, next) {
   let statusCode = StatusCodes.INTERNAL_SERVER_ERROR;
   let message = 'Internal server error';
@@ -17,20 +18,17 @@ function errorHandler(err, req, res, next) {
   if (err instanceof AppError) {
     statusCode = err.statusCode;
     message = err.message;
-  }
-  // Validation errors
-  else if (err.name === 'ValidationError') {
+  } else if (err.name === 'ValidationError') {
+    // Validation errors
     statusCode = StatusCodes.BAD_REQUEST;
     message = 'Validation error';
     errors = err.errors;
-  }
-  // JWT errors
-  else if (err.name === 'JsonWebTokenError') {
+  } else if (err.name === 'JsonWebTokenError') {
+    // JWT errors
     statusCode = StatusCodes.UNAUTHORIZED;
     message = 'Invalid token';
-  }
-  // Unknown errors
-  else if (!err.isOperational) {
+  } else if (!err.isOperational) {
+    // Unknown errors
     logger.error('Unhandled error', {
       error: err.message,
       stack: err.stack,

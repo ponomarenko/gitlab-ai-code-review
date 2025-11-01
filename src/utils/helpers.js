@@ -6,6 +6,7 @@
  * Delay execution
  * @param {number} ms - Milliseconds to wait
  */
+// eslint-disable-next-line no-promise-executor-return
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
@@ -17,14 +18,17 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 async function retry(fn, maxRetries = 3, baseDelay = 1000) {
   let lastError;
 
+  // eslint-disable-next-line no-plusplus
   for (let i = 0; i < maxRetries; i++) {
     try {
+      // eslint-disable-next-line no-await-in-loop
       return await fn();
     } catch (error) {
       lastError = error;
 
       if (i < maxRetries - 1) {
         const delayMs = baseDelay * 2 ** i;
+        // eslint-disable-next-line no-await-in-loop
         await delay(delayMs);
       }
     }
@@ -50,6 +54,7 @@ function truncate(str, maxLength = 100) {
  * @param {string} secret - Webhook secret
  */
 function verifyWebhookSignature(signature, payload, secret) {
+  // eslint-disable-next-line global-require
   const crypto = require('crypto');
   const hmac = crypto.createHmac('sha256', secret);
   const digest = hmac.update(payload).digest('hex');

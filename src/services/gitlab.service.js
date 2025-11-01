@@ -20,12 +20,12 @@ class GitLabService {
 
     // Request interceptor
     this.client.interceptors.request.use(
-      (config) => {
+      (cfg) => {
         logger.debug('GitLab API request', {
-          method: config.method,
-          url: config.url,
+          method: cfg.method,
+          url: cfg.url,
         });
-        return config;
+        return cfg;
       },
     );
 

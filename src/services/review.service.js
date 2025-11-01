@@ -191,6 +191,7 @@ class ReviewService {
 
     for (let i = 0; i < files.length; i += concurrency) {
       const batch = files.slice(i, i + concurrency);
+      // eslint-disable-next-line no-await-in-loop
       const batchResults = await Promise.allSettled(
         batch.map((file) => this.reviewFile(file, mrData, options)),
       );
@@ -317,6 +318,7 @@ class ReviewService {
    */
   async publishReview(projectId, mrIid, reviews, meta) {
     if (reviews.length === 0) {
+      // eslint-disable-next-line no-return-await
       return await this.publishEmptyReview(projectId, mrIid);
     }
 
@@ -387,6 +389,7 @@ class ReviewService {
    * Add inline comments (if enabled)
    * @private
    */
+  // eslint-disable-next-line no-unused-vars
   async addInlineComments(projectId, mrIid, reviews) {
     // Implementation for inline comments
     // This would parse review results and add line-specific comments

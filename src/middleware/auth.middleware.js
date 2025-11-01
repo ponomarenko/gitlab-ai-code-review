@@ -1,7 +1,6 @@
 /**
  * Authentication middleware
  */
-const config = require('../config');
 const { AuthenticationError } = require('../utils/errors');
 
 module.exports = (req, res, next) => {

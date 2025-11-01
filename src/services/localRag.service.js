@@ -77,6 +77,7 @@ class LocalRAGService {
     // Filter files by relevance
     const relevantFiles = [];
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const file of files) {
       const fileName = path.basename(file, '.md').toLowerCase();
 
@@ -113,10 +114,12 @@ class LocalRAGService {
     try {
       const files = await fs.readdir(dir, { withFileTypes: true });
 
+      // eslint-disable-next-line no-restricted-syntax
       for (const file of files) {
         const filePath = path.join(dir, file.name);
 
         if (file.isDirectory()) {
+          // eslint-disable-next-line no-await-in-loop
           await this.getAllMarkdownFiles(filePath, fileList);
         } else if (file.name.endsWith('.md')) {
           fileList.push(filePath);
@@ -178,6 +181,7 @@ class LocalRAGService {
     let currentSection = [];
     let isRelevant = false;
 
+    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       const lineLower = line.toLowerCase();

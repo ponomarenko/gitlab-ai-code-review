@@ -21,12 +21,12 @@ class DifyService {
 
     // Add request interceptor for logging
     this.client.interceptors.request.use(
-      (config) => {
+      (cfg) => {
         logger.debug('Dify API request', {
-          method: config.method,
-          url: config.url,
+          method: cfg.method,
+          url: cfg.url,
         });
-        return config;
+        return cfg;
       },
       (error) => {
         logger.error('Dify API request error', { error: error.message });

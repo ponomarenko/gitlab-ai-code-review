@@ -114,6 +114,7 @@ app.use(errorHandler);
 const gracefulShutdown = (signal) => {
   logger.info(`${signal} received. Starting graceful shutdown...`);
 
+  // eslint-disable-next-line no-use-before-define
   server.close(() => {
     logger.info('HTTP server closed');
 

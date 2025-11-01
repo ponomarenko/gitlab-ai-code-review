@@ -1,13 +1,11 @@
 module.exports = {
+  ignorePatterns: ['tests/**', 'scripts/**'],
   env: {
     node: true,
     es2021: true,
     jest: true,
   },
-  extends: [
-    'airbnb-base',
-    'plugin:jest/recommended',
-  ],
+  extends: ['airbnb-base', 'plugin:jest/recommended'],
   parserOptions: {
     ecmaVersion: 'latest',
     sourceType: 'module',
@@ -18,8 +16,11 @@ module.exports = {
     'no-underscore-dangle': 'off',
     'consistent-return': 'off',
     'class-methods-use-this': 'off',
-    'import/no-extraneous-dependencies': ['error', {
-      devDependencies: ['**/*.test.js', '**/*.spec.js', 'tests/**/*'],
-    }],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: ['**/*.test.js', '**/*.spec.js', 'tests/**/*'],
+      },
+    ],
   },
 };
