@@ -135,7 +135,7 @@ knowledge-base/
 
 ## 📦 Prerequisites
 
-- Node.js >= 18.x
+- Node.js >= 22.x
 - GitLab account with API access
 - Dify account with API key
 - Docker (optional, for containerized deployment)

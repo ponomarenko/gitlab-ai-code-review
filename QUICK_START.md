@@ -4,7 +4,7 @@ Get your AI Code Review bot up and running in 5 minutes!
 
 ## Prerequisites
 
-- Node.js 18+
+- Node.js 22+
 - GitLab account with API access
 - Dify account ([Sign up free](https://cloud.dify.ai))
 

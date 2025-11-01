@@ -7,7 +7,7 @@ process.env.DIFY_API_KEY = 'test-key';
 
 // ============================================
 // tests/unit/services/dify.service.test.js
-const difyService = require('../../../src/services/dify.service');
+const difyService = require('../src/services/dify.service');
 
 describe('DifyService', () => {
   describe('analyzeCode', () => {

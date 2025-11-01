@@ -19,13 +19,13 @@ echo -e "${BLUE}================================${NC}\n"
 # Check if Node.js is installed
 if ! command -v node &> /dev/null; then
     echo -e "${RED}✗ Node.js is not installed${NC}"
-    echo -e "${YELLOW}Please install Node.js 18+ from https://nodejs.org${NC}"
+    echo -e "${YELLOW}Please install Node.js 22+ from https://nodejs.org${NC}"
     exit 1
 fi
 
 NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
-if [ "$NODE_VERSION" -lt 18 ]; then
-    echo -e "${RED}✗ Node.js version must be 18 or higher${NC}"
+if [ "$NODE_VERSION" -lt 22 ]; then
+    echo -e "${RED}✗ Node.js version must be 22 or higher${NC}"
     echo -e "${YELLOW}Current version: $(node -v)${NC}"
     exit 1
 fi
