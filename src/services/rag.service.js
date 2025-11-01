@@ -134,6 +134,9 @@ class RAGService {
     if (ext === 'java') {
       return 'java';
     }
+    if (path.includes('nestjs') || path.includes('api') || path.includes('bff')) {
+      return 'nestjs';
+    }
 
     // Security-related
     if (path.includes('auth') || path.includes('security')) {

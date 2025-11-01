@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production && \
+RUN npm ci --only=production --ignore-scripts && \
     npm cache clean --force
 
 # Stage 2: Production
