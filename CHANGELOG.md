@@ -21,9 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ React best practices (Hooks, components, performance)
 - ✅ Vue.js guidelines and patterns
 - ✅ Angular 18+ best practices (Signals, standalone components)
+- ✅ NestJS framework (DI, modules, TypeORM, testing)
+- ✅ RESTful API design (HTTP methods, versioning, pagination)
+- ✅ Backend security (OWASP Top 10, auth, encryption)
 - ✅ Web accessibility guidelines (WCAG, ARIA)
 - ✅ Frontend performance optimization
-- ✅ Security best practices (XSS, CSRF, authentication)
+- ✅ Frontend security best practices (XSS, CSRF, authentication)
 
 ### Infrastructure
 - 🐳 Docker and Docker Compose support
