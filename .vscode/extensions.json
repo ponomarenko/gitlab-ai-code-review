@@ -1,9 +1,6 @@
 {
   "recommendations": [
-    "formulahendry.auto-rename-tag",
-    "angular.ng-template",
     "dbaeumer.vscode-eslint",
-    "nrwl.angular-console",
     "esbenp.prettier-vscode"
   ]
 }
