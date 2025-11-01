@@ -1,0 +1,98 @@
+{
+  "name": "gitlab-ai-code-review",
+  "version": "1.0.0",
+  "description": "AI-powered code review bot for GitLab with RAG support",
+  "main": "src/app.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "debug": "node --inspect src/app.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration",
+    "test:e2e": "jest --testPathPattern=tests/e2e",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "format": "prettier --write \"src/**/*.js\" \"tests/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"tests/**/*.js\"",
+    "typecheck": "jsdoc -t node_modules/tsd-jsdoc/dist -r src/",
+    "start:pm2": "pm2 start ecosystem.config.js",
+    "stop:pm2": "pm2 stop gitlab-ai-review",
+    "logs": "pm2 logs gitlab-ai-review",
+    "prepare": "husky install",
+    "docker:build": "docker build -t gitlab-ai-review:latest .",
+    "docker:run": "docker run -p 3000:3000 --env-file .env gitlab-ai-review:latest",
+    "setup": "bash scripts/setup.sh",
+    "setup:knowledge-base": "node scripts/setup-knowledge-base.js"
+  },
+  "keywords": [
+    "gitlab",
+    "code-review",
+    "ai",
+    "dify",
+    "automation",
+    "rag",
+    "mlops",
+    "cicd",
+    "devops",
+    "best-practices",
+    "react",
+    "vue",
+    "angular",
+    "nodejs",
+    "webhook",
+    "claude",
+    "anthropic",
+    "developer-tools",
+    "merge-request",
+    "production-ready"
+  ],
+  "author": "Your Name <your.email@example.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.2",
+    "dotenv": "^16.3.1",
+    "winston": "^3.11.0",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "cors": "^2.8.5",
+    "joi": "^17.11.0",
+    "http-status-codes": "^2.3.0",
+    "compression": "^1.7.4",
+    "express-async-errors": "^3.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "eslint": "^8.55.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jest": "^27.6.0",
+    "prettier": "^3.1.1",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "pm2": "^5.3.0",
+    "tsd-jsdoc": "^2.5.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/gitlab-ai-review.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/gitlab-ai-review/issues"
+  },
+  "homepage": "https://github.com/your-org/gitlab-ai-review#readme"
+}
