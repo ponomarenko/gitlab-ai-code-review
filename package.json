@@ -89,10 +89,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-org/gitlab-ai-review.git"
+    "url": "https://github.com/ponomarenko/gitlab-ai-code-review.git"
   },
   "bugs": {
-    "url": "https://github.com/your-org/gitlab-ai-review/issues"
+    "url": "https://github.com/ponomarenko/gitlab-ai-code-review/issues"
   },
-  "homepage": "https://github.com/your-org/gitlab-ai-review#readme"
+  "homepage": "https://github.com/ponomarenko/gitlab-ai-code-review#readme"
 }
