@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "console": "integratedTerminal",
+			"restart": true,
+			"autoAttachChildProcesses": true,
+      "request": "launch",
+      "name": "Debug Program",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/app.js",
+      "envFile": "${workspaceFolder}/.env",
+      "outputCapture": "std",
+      "killBehavior": "polite",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Tests",
+      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+      "args": ["--runInBand"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Process",
+      "port": 9229
+    }
+  ]
+}
