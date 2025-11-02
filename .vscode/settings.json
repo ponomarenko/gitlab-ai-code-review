@@ -5,14 +5,8 @@
   },
   "eslint.validate": ["javascript"],
   "files.eol": "\n",
-  "files.insertFinalNewLine": true,
   "files.trimTrailingWhitespace": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
-  "jest.autoRun": {
-    "watch": false,
-    "onSave": "test-file"
-  },
-  "jest.showCoverageOnLoad": true,
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
