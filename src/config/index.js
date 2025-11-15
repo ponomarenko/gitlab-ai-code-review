@@ -8,13 +8,9 @@ const Joi = require('joi');
 
 // Configuration schema
 const envSchema = Joi.object({
-  NODE_ENV: Joi.string()
-    .valid('development', 'production', 'test')
-    .default('development'),
+  NODE_ENV: Joi.string().valid('development', 'production', 'test').default('development'),
   PORT: Joi.number().default(3000),
-  LOG_LEVEL: Joi.string()
-    .valid('error', 'warn', 'info', 'debug')
-    .default('info'),
+  LOG_LEVEL: Joi.string().valid('error', 'warn', 'info', 'debug').default('info'),
 
   // GitLab
   GITLAB_TOKEN: Joi.string().required(),

@@ -1,0 +1,169 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitlab-ai-review
+  namespace: default
+  labels:
+    app: gitlab-ai-review
+    version: v1
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: gitlab-ai-review
+  template:
+    metadata:
+      labels:
+        app: gitlab-ai-review
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "3000"
+        prometheus.io/path: "/metrics"
+    spec:
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      
+      # Service account
+      serviceAccountName: gitlab-ai-review
+      
+      containers:
+      - name: gitlab-ai-review
+        image: registry.gitlab.com/your-org/gitlab-ai-review:latest
+        imagePullPolicy: Always
+        
+        # Command override (optional)
+        command: ["gitlab-ai-review"]
+        args: ["server", "--port", "3000"]
+        
+        # Environment variables from ConfigMap and Secret
+        envFrom:
+        - configMapRef:
+            name: gitlab-ai-review-config
+        - secretRef:
+            name: gitlab-ai-review-secrets
+        
+        # Ports
+        ports:
+        - name: http
+          containerPort: 3000
+          protocol: TCP
+        
+        # Resource limits
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 1000m
+            memory: 512Mi
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Startup probe (for slow-starting containers)
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        
+        # Security context
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1001
+          capabilities:
+            drop:
+            - ALL
+        
+        # Volume mounts
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: logs
+          mountPath: /app/logs
+        - name: knowledge-base
+          mountPath: /app/knowledge-base
+          readOnly: true
+      
+      # Volumes
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: logs
+        emptyDir: {}
+      - name: knowledge-base
+        configMap:
+          name: gitlab-ai-review-knowledge-base
+      
+      # Image pull secrets (if using private registry)
+      imagePullSecrets:
+      - name: gitlab-registry-credentials
+      
+      # Node affinity (optional)
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - gitlab-ai-review
+              topologyKey: kubernetes.io/hostname
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gitlab-ai-review
+  namespace: default
+  labels:
+    app: gitlab-ai-review
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: http
+    protocol: TCP
+    name: http
+  selector:
+    app: gitlab-ai-review
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: gitlab-ai-review
+  namespace: default

@@ -31,7 +31,7 @@ class ReviewService {
         projectId,
         latestCommit,
         'running',
-        'AI code review in progress...',
+        'AI code review in progress...'
       );
 
       // Get MR changes
@@ -57,11 +57,7 @@ class ReviewService {
       }
 
       // Review files in parallel with concurrency limit
-      const reviews = await this.reviewFilesWithConcurrency(
-        limitedFiles,
-        mrData,
-        options,
-      );
+      const reviews = await this.reviewFilesWithConcurrency(limitedFiles, mrData, options);
 
       // Publish review results
       await this.publishReview(projectId, mrIid, reviews, {
@@ -75,7 +71,7 @@ class ReviewService {
         projectId,
         latestCommit,
         'success',
-        `AI review completed: ${reviews.length} files analyzed`,
+        `AI review completed: ${reviews.length} files analyzed`
       );
 
       // Add success emoji
@@ -108,7 +104,7 @@ class ReviewService {
           projectId,
           mrData.sha,
           'failed',
-          'AI review failed - check logs',
+          'AI review failed - check logs'
         );
       } catch (statusError) {
         logger.error('Failed to update commit status', {
@@ -170,11 +166,30 @@ class ReviewService {
    */
   isBinaryFile(filePath) {
     const binaryExtensions = [
-      'jpg', 'jpeg', 'png', 'gif', 'svg', 'ico', 'webp',
-      'pdf', 'zip', 'tar', 'gz', 'rar',
-      'mp3', 'mp4', 'avi', 'mov',
-      'exe', 'dll', 'so', 'dylib',
-      'woff', 'woff2', 'ttf', 'eot',
+      'jpg',
+      'jpeg',
+      'png',
+      'gif',
+      'svg',
+      'ico',
+      'webp',
+      'pdf',
+      'zip',
+      'tar',
+      'gz',
+      'rar',
+      'mp3',
+      'mp4',
+      'avi',
+      'mov',
+      'exe',
+      'dll',
+      'so',
+      'dylib',
+      'woff',
+      'woff2',
+      'ttf',
+      'eot',
     ];
 
     const ext = filePath.split('.').pop().toLowerCase();
@@ -193,7 +208,7 @@ class ReviewService {
       const batch = files.slice(i, i + concurrency);
       // eslint-disable-next-line no-await-in-loop
       const batchResults = await Promise.allSettled(
-        batch.map((file) => this.reviewFile(file, mrData, options)),
+        batch.map((file) => this.reviewFile(file, mrData, options))
       );
 
       // Collect successful reviews
@@ -346,9 +361,7 @@ class ReviewService {
     comment += `**Duration:** ${(duration / 1000).toFixed(1)}s\n\n`;
     comment += '---\n\n';
 
-    reviews.forEach(({
-      file, language, review, hasBestPractices, ragSources,
-    }) => {
+    reviews.forEach(({ file, language, review, hasBestPractices, ragSources }) => {
       comment += `### 📄 \`${file}\`\n\n`;
 
       if (language) {
@@ -374,13 +387,14 @@ class ReviewService {
    * @private
    */
   async publishEmptyReview(projectId, mrIid) {
-    const comment = '## 🤖 AI Code Review\n\n'
-      + 'No reviewable files found in this merge request.\n\n'
-      + '*Files may have been skipped due to:*\n'
-      + '- Binary files\n'
-      + '- Generated/minified code\n'
-      + '- Lock files\n'
-      + '- Files exceeding size limits';
+    const comment =
+      '## 🤖 AI Code Review\n\n' +
+      'No reviewable files found in this merge request.\n\n' +
+      '*Files may have been skipped due to:*\n' +
+      '- Binary files\n' +
+      '- Generated/minified code\n' +
+      '- Lock files\n' +
+      '- Files exceeding size limits';
 
     await gitlabService.addMergeRequestComment(projectId, mrIid, comment);
   }

@@ -1,0 +1,104 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+  IMAGE_NAME: $CI_REGISTRY_IMAGE
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+
+# Test stage
+test:
+  stage: test
+  image: node:22-alpine
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules/
+  before_script:
+    - npm ci
+  script:
+    - npm run lint
+    - npm run format:check
+    - npm run test
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  only:
+    - merge_requests
+    - main
+    - develop
+
+# Build Docker image
+build:
+  stage: build
+  image: docker:24-dind
+  services:
+    - docker:24-dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    # Build CLI image
+    - docker build -f Dockerfile.cli -t $IMAGE_NAME:$IMAGE_TAG -t $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:latest
+    
+    # Build standard image (optional)
+    - docker build -f Dockerfile -t $IMAGE_NAME:standard-$IMAGE_TAG .
+    - docker push $IMAGE_NAME:standard-$IMAGE_TAG
+  only:
+    - main
+    - tags
+
+# Deploy to production
+deploy:production:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "Deploying to production..."
+    # Example: Trigger deployment webhook or update Kubernetes
+    - |
+      if [ -n "$DEPLOY_WEBHOOK_URL" ]; then
+        curl -X POST $DEPLOY_WEBHOOK_URL \
+          -H "Content-Type: application/json" \
+          -d "{\"image\":\"$IMAGE_NAME:$IMAGE_TAG\",\"environment\":\"production\"}"
+      fi
+  environment:
+    name: production
+    url: https://gitlab-ai-review.example.com
+  only:
+    - main
+  when: manual
+
+# Deploy to staging
+deploy:staging:
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl
+  script:
+    - echo "Deploying to staging..."
+    - |
+      if [ -n "$STAGING_WEBHOOK_URL" ]; then
+        curl -X POST $STAGING_WEBHOOK_URL \
+          -H "Content-Type: application/json" \
+          -d "{\"image\":\"$IMAGE_NAME:$IMAGE_TAG\",\"environment\":\"staging\"}"
+      fi
+  environment:
+    name: staging
+    url: https://staging.gitlab-ai-review.example.com
+  only:
+    - develop
+  when: on_success

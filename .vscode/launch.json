@@ -3,34 +3,71 @@
   "configurations": [
     {
       "type": "node",
-      "console": "integratedTerminal",
-			"restart": true,
-			"autoAttachChildProcesses": true,
       "request": "launch",
-      "name": "Debug Program",
+      "name": "Debug CLI - Server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/cli.js",
+      "args": ["server", "--verbose"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI - Review",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/cli.js",
+      "args": ["review", "--project", "${input:projectId}", "--mr", "${input:mrIid}", "--verbose"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI - Health Check",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/cli.js",
+      "args": ["health", "--all", "--verbose"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug CLI - Config",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/cli.js",
+      "args": ["config", "--json", "--verbose"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug App (Server)",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/app.js",
       "envFile": "${workspaceFolder}/.env",
-      "outputCapture": "std",
-      "killBehavior": "polite",
-      "env": {
-        "NODE_ENV": "development"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
-      "name": "Debug Tests",
-      "program": "${workspaceFolder}/node_modules/jest/bin/jest",
-      "args": ["--runInBand"],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "outputCapture": "std"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "projectId",
+      "type": "promptString",
+      "description": "GitLab Project ID",
+      "default": "123"
     },
     {
-      "type": "node",
-      "request": "attach",
-      "name": "Attach to Process",
-      "port": 9229
+      "id": "mrIid",
+      "type": "promptString",
+      "description": "Merge Request IID",
+      "default": "1"
     }
   ]
 }

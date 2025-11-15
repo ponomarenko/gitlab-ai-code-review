@@ -21,26 +21,30 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+      },
     },
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true,
-  },
-}));
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+  })
+);
 
 // CORS configuration
-app.use(cors({
-  origin: config.cors.origin,
-  credentials: true,
-  optionsSuccessStatus: 200,
-}));
+app.use(
+  cors({
+    origin: config.cors.origin,
+    credentials: true,
+    optionsSuccessStatus: 200,
+  })
+);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -83,7 +87,8 @@ app.get('/ready', (req, res) => {
 // Metrics endpoint (for Prometheus)
 app.get('/metrics', (req, res) => {
   res.set('Content-Type', 'text/plain');
-  res.send(`
+  res.send(
+    `
 # HELP nodejs_heap_size_total_bytes Total heap size
 # TYPE nodejs_heap_size_total_bytes gauge
 nodejs_heap_size_total_bytes ${process.memoryUsage().heapTotal}
@@ -95,7 +100,8 @@ nodejs_heap_size_used_bytes ${process.memoryUsage().heapUsed}
 # HELP process_cpu_user_seconds_total User CPU time
 # TYPE process_cpu_user_seconds_total counter
 process_cpu_user_seconds_total ${process.cpuUsage().user / 1000000}
-  `.trim());
+  `.trim()
+  );
 });
 
 // API routes

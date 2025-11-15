@@ -31,7 +31,7 @@ class DifyService {
       (error) => {
         logger.error('Dify API request error', { error: error.message });
         return Promise.reject(error);
-      },
+      }
     );
 
     // Add response interceptor for error handling
@@ -45,7 +45,7 @@ class DifyService {
           url: error.config?.url,
         });
         throw new DifyAPIError(message, error.response?.status);
-      },
+      }
     );
   }
 
@@ -168,7 +168,9 @@ Provide a detailed code review covering:
 6. **🧪 Testing**: Identify missing tests or test scenarios
 7. **📝 Documentation**: Note missing or unclear documentation
 
-${language && this.isFrontendLanguage(language) ? `
+${
+  language && this.isFrontendLanguage(language)
+    ? `
 **Frontend-Specific Checks:**
 - Accessibility (WCAG compliance, ARIA labels, keyboard navigation)
 - Responsive design considerations
@@ -176,7 +178,9 @@ ${language && this.isFrontendLanguage(language) ? `
 - Component reusability
 - Browser compatibility
 - Bundle size impact
-` : ''}
+`
+    : ''
+}
 
 **Format:**
 - Use clear, actionable feedback
@@ -194,8 +198,15 @@ Structured review with clear sections and severity indicators.`;
    */
   isFrontendLanguage(language) {
     const frontendLangs = [
-      'javascript', 'typescript', 'jsx', 'tsx',
-      'vue', 'html', 'css', 'scss', 'less',
+      'javascript',
+      'typescript',
+      'jsx',
+      'tsx',
+      'vue',
+      'html',
+      'css',
+      'scss',
+      'less',
     ];
     return frontendLangs.some((lang) => language.toLowerCase().includes(lang));
   }

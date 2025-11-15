@@ -19,15 +19,13 @@ class GitLabService {
     });
 
     // Request interceptor
-    this.client.interceptors.request.use(
-      (cfg) => {
-        logger.debug('GitLab API request', {
-          method: cfg.method,
-          url: cfg.url,
-        });
-        return cfg;
-      },
-    );
+    this.client.interceptors.request.use((cfg) => {
+      logger.debug('GitLab API request', {
+        method: cfg.method,
+        url: cfg.url,
+      });
+      return cfg;
+    });
 
     // Response interceptor
     this.client.interceptors.response.use(
@@ -40,7 +38,7 @@ class GitLabService {
           url: error.config?.url,
         });
         throw new GitLabAPIError(message, error.response?.status);
-      },
+      }
     );
   }
 
@@ -52,9 +50,7 @@ class GitLabService {
    */
   async getMergeRequest(projectId, mrIid) {
     try {
-      const { data } = await this.client.get(
-        `/projects/${projectId}/merge_requests/${mrIid}`,
-      );
+      const { data } = await this.client.get(`/projects/${projectId}/merge_requests/${mrIid}`);
 
       logger.info('Retrieved MR details', {
         projectId,
@@ -78,7 +74,7 @@ class GitLabService {
   async getMergeRequestChanges(projectId, mrIid) {
     try {
       const { data } = await this.client.get(
-        `/projects/${projectId}/merge_requests/${mrIid}/changes`,
+        `/projects/${projectId}/merge_requests/${mrIid}/changes`
       );
 
       logger.info('Retrieved MR changes', {
@@ -103,7 +99,7 @@ class GitLabService {
   async getMergeRequestCommits(projectId, mrIid) {
     try {
       const { data } = await this.client.get(
-        `/projects/${projectId}/merge_requests/${mrIid}/commits`,
+        `/projects/${projectId}/merge_requests/${mrIid}/commits`
       );
 
       logger.debug('Retrieved MR commits', {
@@ -130,7 +126,7 @@ class GitLabService {
     try {
       const { data } = await this.client.post(
         `/projects/${projectId}/merge_requests/${mrIid}/notes`,
-        { body: comment },
+        { body: comment }
       );
 
       logger.info('Added MR comment', {
@@ -164,7 +160,7 @@ class GitLabService {
             position_type: 'text',
             ...position,
           },
-        },
+        }
       );
 
       logger.info('Added inline comment', {
@@ -194,10 +190,9 @@ class GitLabService {
    */
   async updateMergeRequestLabels(projectId, mrIid, labels) {
     try {
-      const { data } = await this.client.put(
-        `/projects/${projectId}/merge_requests/${mrIid}`,
-        { add_labels: labels.join(',') },
-      );
+      const { data } = await this.client.put(`/projects/${projectId}/merge_requests/${mrIid}`, {
+        add_labels: labels.join(','),
+      });
 
       logger.info('Updated MR labels', {
         projectId,
@@ -246,7 +241,7 @@ class GitLabService {
         `/projects/${projectId}/repository/files/${encodeURIComponent(filePath)}`,
         {
           params: { ref },
-        },
+        }
       );
 
       // Content is base64 encoded
@@ -279,15 +274,12 @@ class GitLabService {
    */
   async updateCommitStatus(projectId, commitSha, state, description) {
     try {
-      const { data } = await this.client.post(
-        `/projects/${projectId}/statuses/${commitSha}`,
-        {
-          state,
-          description,
-          name: 'AI Code Review',
-          context: 'ai-review',
-        },
-      );
+      const { data } = await this.client.post(`/projects/${projectId}/statuses/${commitSha}`, {
+        state,
+        description,
+        name: 'AI Code Review',
+        context: 'ai-review',
+      });
 
       logger.info('Updated commit status', {
         projectId,
@@ -316,7 +308,7 @@ class GitLabService {
     try {
       const { data } = await this.client.post(
         `/projects/${projectId}/merge_requests/${mrIid}/award_emoji`,
-        { name: emoji },
+        { name: emoji }
       );
 
       logger.debug('Added emoji reaction', {

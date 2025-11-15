@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-ai-review-config
+  namespace: default
+  labels:
+    app: gitlab-ai-review
+data:
+  # Server configuration
+  NODE_ENV: "production"
+  PORT: "3000"
+  LOG_LEVEL: "info"
+  
+  # GitLab configuration
+  GITLAB_URL: "https://gitlab.com"
+  
+  # Dify configuration
+  DIFY_API_URL: "https://api.dify.ai/v1"
+  DIFY_USER: "gitlab-bot"
+  
+  # Review configuration
+  MAX_FILES_PER_REVIEW: "20"
+  MAX_DIFF_SIZE: "5000"
+  ENABLE_INLINE_COMMENTS: "false"
+  SKIP_PATTERNS: "node_modules,dist,build,*.lock,*.min.js,*.min.css"
+  
+  # Rate limiting
+  RATE_LIMIT_WINDOW_MS: "900000"
+  RATE_LIMIT_MAX_REQUESTS: "100"
+  
+  # RAG configuration
+  RAG_ENABLED: "true"
+  RAG_KNOWLEDGE_BASE: "frontend-best-practices"
+  
+  # CORS configuration
+  CORS_ORIGIN: "*"
