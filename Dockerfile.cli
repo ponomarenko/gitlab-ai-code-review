@@ -11,17 +11,20 @@ COPY package*.json ./
 
 # Install production dependencies only
 RUN npm ci --only=production --ignore-scripts && \
-    npm cache clean --force
+  npm cache clean --force
 
 # Stage 2: Production
 FROM node:22-alpine
+
+ENV CI=true
+ENV NODE_ENV=production
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init tini
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
+  adduser -S nodejs -u 1001
 
 WORKDIR /app
 
