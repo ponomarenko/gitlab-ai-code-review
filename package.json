@@ -28,7 +28,7 @@
     "start:pm2": "pm2 start ecosystem.config.js",
     "stop:pm2": "pm2 stop gitlab-ai-review",
     "logs": "pm2 logs gitlab-ai-review",
-    "prepare": "if [ -z \"$CI\" ]; then husky install; fi",
+    "prepare": "node -e \"if(!process.env.CI) require('child_process').execSync('husky install', {stdio: 'inherit'})\"",
     "docker:build": "docker build -f Dockerfile.cli -t gitlab-ai-review:latest .",
     "docker:run": "docker run -p 3000:3000 --env-file .env gitlab-ai-review:latest",
     "setup": "bash scripts/setup.sh",
