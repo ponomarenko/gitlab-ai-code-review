@@ -1,10 +1,9 @@
 name: Create and publish a Docker image
 
-# Configures this workflow to run every time a change is pushed to the branch called `main`.
+# Configures this workflow to run every time a change is pushed to the branch called `release`.
 on:
   push:
     branches: ['main']
-  workflow_dispatch: {} # allow manual runs
 
 # Defines two custom environment variables for the workflow. These are used for the Container registry domain, and a name for the Docker image that this workflow builds.
 env:
@@ -15,66 +14,42 @@ env:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    concurrency:
-      group: build-image-${{ github.ref }}
-      cancel-in-progress: true
     # Sets the permissions granted to the `GITHUB_TOKEN` for the actions in this job.
     permissions:
       contents: read
       packages: write
+      attestations: write
       id-token: write
+      # Defines a series of steps that are executed as part of the job.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-
-      # Set up QEMU for multi-arch emulation (required for cross-platform builds)
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
-      # Set up buildx for advanced build features and cache
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        with:
-          buildkitd-flags: --debug
-
-      # Uses the `docker/login-action` action to log in to the Container registry using the GITHUB_TOKEN.
+      # Uses the `docker/login-action` action to log in to the Container registry registry using the account and password that will publish the packages. Once published, the packages are scoped to the account defined here.
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      # Extract metadata (tags, labels) for Docker
+      # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      # Optionally create deterministic additional tags (short SHA + latest)
-      - name: Set image tags
-        id: tags
-        run: |
-          echo "SHORT_SHA=$(echo ${GITHUB_SHA} | cut -c1-7)" >> $GITHUB_OUTPUT
-          # combine meta tags with explicit latest and short-sha tag
-          echo "TAGS=${{ steps.meta.outputs.tags }},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest,${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${SHORT_SHA}" >> $GITHUB_OUTPUT
-
-      # Build and push Docker image (multi-arch). Using cache-from/to backed by GitHub Actions cache.
+      # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
+      # It uses the `context` parameter to define the build's context as the set of files located in the specified path. For more information, see [Usage](https://github.com/docker/build-push-action#usage) in the README of the `docker/build-push-action` repository.
+      # It uses the `tags` and `labels` parameters to tag and label the image with the output from the "meta" step.
       - name: Build and push Docker image
         id: push
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile.cli
           push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.tags.outputs.TAGS }}
+          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
-      # Generate artifact attestation for image provenance
+      # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see [Using artifact attestations to establish provenance for builds](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds).
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
         with:
