@@ -1,6 +1,6 @@
 {
   "name": "gitlab-ai-code-review",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "AI-powered code review bot for GitLab with RAG support",
   "main": "src/app.js",
   "bin": {
