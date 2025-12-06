@@ -14,6 +14,7 @@ const logger = require('./utils/logger');
 const routes = require('./routes');
 const { errorHandler, notFoundHandler } = require('./middleware/error.middleware');
 const rateLimitMiddleware = require('./middleware/rateLimit.middleware');
+const { version } = require('../package.json');
 
 const app = express();
 
@@ -74,7 +75,7 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
     environment: config.env,
-    version: process.env.npm_package_version || '1.0.0',
+    version,
   });
 });
 
@@ -153,10 +154,12 @@ process.on('unhandledRejection', (reason, promise) => {
 // Start server
 const PORT = config.port;
 const server = app.listen(PORT, () => {
-  logger.info(`Server started on port ${PORT}`, {
+  logger.info(`GitLab AI Code Review v${version} started`, {
+    version,
     environment: config.env,
     nodeVersion: process.version,
     pid: process.pid,
+    port: PORT,
   });
   logger.info(`Webhook URL: http://localhost:${PORT}/webhook/gitlab`);
   logger.info(`Health check: http://localhost:${PORT}/health`);

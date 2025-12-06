@@ -6,10 +6,12 @@
 const logger = require('../utils/logger');
 const reviewService = require('../services/review.service');
 const gitlabService = require('../services/gitlab.service');
+const { version } = require('../../package.json');
 
 module.exports = async (options) => {
   try {
-    logger.info('Starting manual code review', {
+    logger.info(`GitLab AI Code Review v${version} - Starting manual review`, {
+      version,
       project: options.project,
       mergeRequest: options.mr,
       force: options.force,

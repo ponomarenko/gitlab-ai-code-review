@@ -4,10 +4,12 @@
  */
 
 const logger = require('../utils/logger');
+const { version } = require('../../package.json');
 
 module.exports = async (options) => {
   try {
-    logger.info('Starting server...', {
+    logger.info(`Starting GitLab AI Code Review v${version}...`, {
+      version,
       port: options.port,
       host: options.host,
       environment: process.env.NODE_ENV,
