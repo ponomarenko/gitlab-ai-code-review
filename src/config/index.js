@@ -27,6 +27,7 @@ const envSchema = Joi.object({
   MAX_DIFF_SIZE: Joi.number().default(5000),
   ENABLE_INLINE_COMMENTS: Joi.boolean().default(false),
   SKIP_PATTERNS: Joi.string().default('node_modules,dist,build,*.lock'),
+  REVIEW_FOCUS: Joi.string().valid('critical-only', 'actionable', 'detailed').default('actionable'),
 
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: Joi.number().default(900000), // 15 minutes
@@ -70,6 +71,7 @@ module.exports = {
     maxDiffSize: envVars.MAX_DIFF_SIZE,
     enableInlineComments: envVars.ENABLE_INLINE_COMMENTS,
     skipPatterns: envVars.SKIP_PATTERNS.split(',').map((p) => p.trim()),
+    focus: envVars.REVIEW_FOCUS, // 'critical-only', 'actionable', 'detailed'
   },
 
   rateLimit: {
