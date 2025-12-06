@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/ponomarenko/gitlab-ai-code-review/compare/v1.0.0...v1.0.1) (2025-12-06)
+
+
+### Bug Fixes
+
+* handle duplicate award emoji gracefully ([#2](https://github.com/ponomarenko/gitlab-ai-code-review/issues/2)) ([36febf6](https://github.com/ponomarenko/gitlab-ai-code-review/commit/36febf61744ca29908fdd83e5e654c5f3453fb17))
+
 ## 1.0.0 (2025-12-06)
 
 
