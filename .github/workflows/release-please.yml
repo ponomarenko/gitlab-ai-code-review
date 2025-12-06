@@ -18,6 +18,7 @@ jobs:
         with:
           release-type: node
           package-name: gitlab-ai-code-review
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Publish to npm (optional - uncomment if you want to publish to npm)
       # - uses: actions/checkout@v4
