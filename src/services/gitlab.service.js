@@ -319,6 +319,13 @@ class GitLabService {
 
       return data;
     } catch (error) {
+      // If emoji already exists, that's fine - don't log as error
+      const message = error.response?.data?.message || error.message || '';
+      if (message.includes('already been taken')) {
+        logger.debug('Emoji already exists', { projectId, mrIid, emoji });
+        return null;
+      }
+
       logger.error('Failed to add emoji', { projectId, mrIid, emoji });
       // Don't throw - emoji is optional
       return null;
