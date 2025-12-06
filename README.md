@@ -333,7 +333,8 @@ gitlab-ai-review/
 │   ├── utils/
 │   │   ├── logger.js             # Winston logger
 │   │   ├── errors.js             # Custom errors
-│   │   └── helpers.js            # Helper functions
+│   │   ├── helpers.js            # Helper functions
+│   │   └── prompt-loader.js      # Prompt template loader
 │   ├── routes/
 │   │   ├── index.js              # API routes
 │   │   └── webhook.routes.js     # Webhook routes
@@ -353,16 +354,21 @@ gitlab-ai-review/
 ├── scripts/
 │   ├── setup.sh                  # Setup script
 │   └── deploy.sh                 # Deployment script
-├── knowledge-base/                # RAG knowledge base
-│   ├── frontend/
+├── knowledge-base/                # Knowledge base & prompts
+│   ├── prompts/                   # AI prompt templates
+│   │   ├── actionable-review.md   # Default review prompt
+│   │   ├── critical-only-review.md # Critical issues only
+│   │   └── detailed-review.md     # Comprehensive review
+│   ├── frontend/                  # Frontend best practices (RAG)
 │   │   ├── react-best-practices.md
 │   │   ├── vue-best-practices.md
 │   │   ├── accessibility.md
 │   │   ├── performance.md
 │   │   └── security.md
-│   └── backend/
-│       ├── api-design.md
-│       └── security.md
+│   ├── backend/                   # Backend best practices (RAG)
+│   │   ├── api-design.md
+│   │   └── security.md
+│   └── README.md                  # Knowledge base documentation
 ├── logs/                          # Application logs (gitignored)
 ├── .github/
 │   └── workflows/

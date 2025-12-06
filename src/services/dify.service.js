@@ -7,6 +7,7 @@ const axios = require('axios');
 const config = require('../config');
 const logger = require('../utils/logger');
 const { DifyAPIError } = require('../utils/errors');
+const promptLoader = require('../utils/prompt-loader');
 
 class DifyService {
   constructor() {
@@ -163,75 +164,15 @@ class DifyService {
   buildActionablePrompt(diff, fileName, language, context) {
     const { mrTitle = '', mrDescription = '', fileUrl = '' } = context;
 
-    return `You are an expert code reviewer. Analyze the following code changes and provide ONLY actionable feedback for issues that require changes.
-
-**Context:**
-- File: ${fileName}
-- Language: ${language || 'auto-detect'}
-${mrTitle ? `- MR Title: ${mrTitle}` : ''}
-${mrDescription ? `- MR Description: ${mrDescription}` : ''}
-${fileUrl ? `- File URL: ${fileUrl}` : ''}
-
-**Changes:**
-\`\`\`diff
-${diff}
-\`\`\`
-
-**CRITICAL INSTRUCTIONS:**
-1. Report ONLY issues that require code changes
-2. Skip sections where everything is acceptable - DO NOT mention them at all
-3. DO NOT provide generic advice about testing, documentation, or MR descriptions
-4. DO NOT include suggestions for "how to test" or "what to document"
-5. Focus on actual code problems, not process recommendations
-6. Keep response concise (under 300 words total)
-7. **IMPORTANT:** If there are NO issues at all, respond with EXACTLY: "NO_ISSUES_FOUND" (nothing else)
-8. **STRICT FORMAT:** Start your response with "<!-- ISSUES_FOUND -->" if you have issues to report
-9. Never mix the marker with content - either respond "NO_ISSUES_FOUND" OR start with "<!-- ISSUES_FOUND -->" followed by issues
-
-**Review Areas (include section ONLY if issues found):**
-
-🔴 **Critical Issues** (bugs/security - must fix):
-- Logic errors, potential crashes, null pointer exceptions
-- Security vulnerabilities (XSS, injection, auth bypass)
-- Breaking changes or data loss risks
-
-🟡 **Important Issues** (performance/quality - should fix):
-- Performance bottlenecks, memory leaks, N+1 queries
-- Code smells (complex logic, duplications, tight coupling)
-- Missing critical error handling
-
-🔵 **Code Quality** (maintainability - optional):
-- Unclear naming or confusing structure
-- Violations of language-specific best practices
-${
-  language && this.isFrontendLanguage(language)
-    ? `
-🎨 **Frontend Issues** (only if problems found):
-- Accessibility violations (missing ARIA, keyboard navigation)
-- Performance issues (unnecessary re-renders, large bundles)
-- Responsive design problems`
-    : ''
-}
-
-**Output Rules:**
-- Each issue: severity emoji + specific problem + line reference as clickable link
-- When referencing specific lines, ALWAYS use markdown link format: [Line X](${fileUrl}#LX) or [Lines X-Y](${fileUrl}#LX-Y)
-- Example: [Line 42](${fileUrl}#L42) instead of "Line 42"
-- Provide code fix example only for complex issues
-- Maximum 3-4 issues per severity level
-- If code is good with NO issues: respond EXACTLY with "NO_ISSUES_FOUND"
-- If code has issues: provide detailed feedback with clickable line references
-
-**Example output with issues:**
-<!-- ISSUES_FOUND -->
-🔴 **Critical Issues**
-- [Line 42](${fileUrl}#L42): Null pointer risk when \`user.profile\` is undefined - add null check
-
-🟡 **Important Issues**
-- [Lines 15-20](${fileUrl}#L15-20): Database query in loop causes N+1 problem - fetch all records first
-
-**Example when no issues (respond ONLY this exact text):**
-NO_ISSUES_FOUND`;
+    return promptLoader.getPrompt('actionable-review', {
+      diff,
+      fileName,
+      language: language || 'auto-detect',
+      mrTitle,
+      mrDescription,
+      fileUrl,
+      isFrontend: language && this.isFrontendLanguage(language),
+    });
   }
 
   /**
@@ -241,51 +182,14 @@ NO_ISSUES_FOUND`;
   buildCriticalOnlyPrompt(diff, fileName, language, context) {
     const { mrTitle = '', mrDescription = '', fileUrl = '' } = context;
 
-    return `You are an expert code reviewer. Focus ONLY on critical bugs and security issues.
-
-**Context:**
-- File: ${fileName}
-- Language: ${language || 'auto-detect'}
-${mrTitle ? `- MR Title: ${mrTitle}` : ''}
-${mrDescription ? `- MR Description: ${mrDescription}` : ''}
-${fileUrl ? `- File URL: ${fileUrl}` : ''}
-
-**Changes:**
-\`\`\`diff
-${diff}
-\`\`\`
-
-**CRITICAL INSTRUCTIONS:**
-1. Report ONLY critical bugs and security vulnerabilities
-2. Ignore code style, performance, and best practices unless critical
-3. Skip minor issues and suggestions completely
-4. Maximum 200 words total
-5. DO NOT mention testing, documentation, or code quality
-6. **IMPORTANT:** If NO critical issues found, respond with EXACTLY: "NO_ISSUES_FOUND" (nothing else)
-7. **STRICT FORMAT:** Start response with "<!-- ISSUES_FOUND -->" if you have critical issues
-8. Never mix marker with content - either "NO_ISSUES_FOUND" OR "<!-- ISSUES_FOUND -->" + issues
-
-**Report ONLY:**
-
-🔴 **Critical Issues** (must fix before merge):
-- Logic errors that cause crashes or data corruption
-- Security vulnerabilities (XSS, SQL injection, auth bypass, data leaks)
-- Breaking changes that break existing functionality
-
-**Output Rules:**
-- List only critical problems with clickable line references
-- When referencing lines, use format: [Line X](${fileUrl}#LX)
-- No suggestions or improvements
-- Maximum 2-3 critical issues
-
-**Example with critical issues:**
-<!-- ISSUES_FOUND -->
-🔴 **Critical Issues**
-- [Line 42](${fileUrl}#L42): SQL injection vulnerability - user input not sanitized
-- [Line 58](${fileUrl}#L58): Authentication bypass - missing permission check
-
-**Example with no critical issues (respond ONLY this exact text):**
-NO_ISSUES_FOUND`;
+    return promptLoader.getPrompt('critical-only-review', {
+      diff,
+      fileName,
+      language: language || 'auto-detect',
+      mrTitle,
+      mrDescription,
+      fileUrl,
+    });
   }
 
   /**
@@ -295,58 +199,15 @@ NO_ISSUES_FOUND`;
   buildDetailedPrompt(diff, fileName, language, context) {
     const { mrTitle = '', mrDescription = '', fileUrl = '' } = context;
 
-    return `You are an expert code reviewer. Analyze the following code changes.
-
-**Context:**
-- File: ${fileName}
-- Language: ${language || 'auto-detect'}
-${mrTitle ? `- MR Title: ${mrTitle}` : ''}
-${mrDescription ? `- MR Description: ${mrDescription}` : ''}
-${fileUrl ? `- File URL: ${fileUrl}` : ''}
-
-**Changes:**
-\`\`\`diff
-${diff}
-\`\`\`
-
-**Review Guidelines:**
-Provide a detailed code review covering:
-
-1. **🐛 Bugs & Errors**: Identify potential bugs, logic errors, or edge cases
-2. **🔒 Security**: Highlight security vulnerabilities or concerns
-3. **⚡ Performance**: Suggest optimizations and performance improvements
-4. **♻️ Code Quality**: Comment on code structure, naming, and maintainability
-5. **✅ Best Practices**: Verify adherence to language-specific best practices
-6. **🧪 Testing**: Identify missing tests or test scenarios
-7. **📝 Documentation**: Note missing or unclear documentation
-
-${
-  language && this.isFrontendLanguage(language)
-    ? `
-**Frontend-Specific Checks:**
-- Accessibility (WCAG compliance, ARIA labels, keyboard navigation)
-- Responsive design considerations
-- State management patterns
-- Component reusability
-- Browser compatibility
-- Bundle size impact
-`
-    : ''
-}
-
-**Format:**
-- Use clear, actionable feedback
-- Prioritize issues by severity (Critical, Major, Minor)
-- ALWAYS reference specific lines using markdown links: [Line X](${fileUrl}#LX)
-- Provide code examples for suggestions
-- Be constructive and educational
-- **IMPORTANT:** If NO issues found, respond with EXACTLY: "NO_ISSUES_FOUND"
-- **STRICT FORMAT:** Start response with "<!-- ISSUES_FOUND -->" if you have issues
-
-**Output:**
-Structured review with clear sections, severity indicators, and clickable line references.
-If no issues: respond only "NO_ISSUES_FOUND"
-If issues exist: start with "<!-- ISSUES_FOUND -->" then provide the review.`;
+    return promptLoader.getPrompt('detailed-review', {
+      diff,
+      fileName,
+      language: language || 'auto-detect',
+      mrTitle,
+      mrDescription,
+      fileUrl,
+      isFrontend: language && this.isFrontendLanguage(language),
+    });
   }
 
   /**

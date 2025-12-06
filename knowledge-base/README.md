@@ -4,7 +4,19 @@ This directory contains best practices and guidelines used by the AI Code Review
 
 ## Purpose
 
-The knowledge base files are used to provide context-aware code review feedback by:
+The knowledge base serves two main purposes:
+
+### 1. AI Prompt Templates (`prompts/`)
+Centralized prompt templates used by the Dify service for code reviews. These templates are loaded dynamically and support variable interpolation.
+
+**Benefits:**
+- ✅ Easier to maintain and update prompts without code changes
+- ✅ Version control for prompt changes
+- ✅ Cleaner, more readable service code
+- ✅ Simple template syntax with variable substitution
+
+### 2. Best Practices Documentation (`frontend/`, `backend/`)
+Used for RAG (Retrieval-Augmented Generation) to provide context-aware code review feedback:
 
 1. **Dify RAG Integration**: Files are uploaded to Dify as a knowledge base
 2. **Local Fallback**: Read directly from filesystem when Dify is unavailable
@@ -14,6 +26,10 @@ The knowledge base files are used to provide context-aware code review feedback 
 
 ```
 knowledge-base/
+├── prompts/                         # AI prompt templates
+│   ├── actionable-review.md        # Default review prompt
+│   ├── critical-only-review.md     # Critical issues only
+│   └── detailed-review.md          # Comprehensive review
 ├── frontend/
 │   ├── react-best-practices.md      # React 18+ patterns
 │   ├── vue-best-practices.md        # Vue.js guidelines
@@ -213,6 +229,70 @@ DIFY_API_URL=https://api.dify.ai/v1
 - [RAG Best Practices](https://docs.dify.ai/guides/knowledge-base)
 - [Markdown Guide](https://www.markdownguide.org/)
 
+## Working with Prompt Templates
+
+### Template Syntax
+
+Prompts use a simple template syntax:
+
+**Variables**: `{{variableName}}`
+```markdown
+- File: {{fileName}}
+- Language: {{language}}
+```
+
+**Conditionals**: `{{#if variable}}content{{/if}}`
+```markdown
+{{#if mrTitle}}- MR Title: {{mrTitle}}{{/if}}
+{{#if isFrontend}}
+🎨 **Frontend Issues**
+- Accessibility violations
+{{/if}}
+```
+
+### Creating New Prompt Templates
+
+1. Create new `.md` file in `knowledge-base/prompts/`:
+   ```bash
+   touch knowledge-base/prompts/security-focused-review.md
+   ```
+
+2. Write your prompt using template syntax:
+   ```markdown
+   # Security-Focused Review
+
+   Analyze: {{fileName}}
+
+   {{#if language}}Language: {{language}}{{/if}}
+
+   Focus on security vulnerabilities...
+   ```
+
+3. Use in service code:
+   ```javascript
+   const prompt = promptLoader.getPrompt('security-focused-review', {
+     fileName: 'auth.js',
+     language: 'javascript'
+   });
+   ```
+
+### Modifying Existing Prompts
+
+1. Edit the `.md` file directly
+2. Test changes by running a review
+3. No code restart needed - templates are cached but can be reloaded
+
+### Available Template Variables
+
+Common variables used across prompts:
+- `{{diff}}` - Git diff content
+- `{{fileName}}` - File name
+- `{{language}}` - Programming language
+- `{{mrTitle}}` - Merge request title
+- `{{mrDescription}}` - Merge request description
+- `{{fileUrl}}` - URL to file in GitLab
+- `{{isFrontend}}` - Boolean for frontend language detection
+
 ## Contributing
 
 When adding or updating knowledge base content:
@@ -222,3 +302,4 @@ When adding or updating knowledge base content:
 3. Reference authoritative sources
 4. Test code examples
 5. Update this README if adding new categories
+6. For prompt templates, use the documented template syntax
