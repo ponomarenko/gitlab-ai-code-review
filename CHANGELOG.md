@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/ponomarenko/gitlab-ai-code-review/compare/v1.0.1...v1.1.0) (2025-12-10)
+
+
+### Features
+
+* add repository context support for project-specific code reviews ([#4](https://github.com/ponomarenko/gitlab-ai-code-review/issues/4)) ([d20a16e](https://github.com/ponomarenko/gitlab-ai-code-review/commit/d20a16e22b66cff821391edb3a62e29cf8596500))
+
 ## [1.0.1](https://github.com/ponomarenko/gitlab-ai-code-review/compare/v1.0.0...v1.0.1) (2025-12-06)
 
 
