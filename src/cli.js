@@ -49,6 +49,7 @@ program
   .requiredOption('-p, --project <id>', 'GitLab project ID')
   .requiredOption('-m, --mr <iid>', 'Merge request IID')
   .option('-f, --force', 'Force review even if already reviewed')
+  .option('-c, --context <file>', 'Path to repository context file (e.g., .aicodereview)')
   .action(reviewCommand);
 
 // Health check command
