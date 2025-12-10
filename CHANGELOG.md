@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/ponomarenko/gitlab-ai-code-review/compare/v1.1.0...v1.1.1) (2025-12-10)
+
+
+### Bug Fixes
+
+* update documentation links to reflect actual file structure ([#7](https://github.com/ponomarenko/gitlab-ai-code-review/issues/7)) ([d8bb599](https://github.com/ponomarenko/gitlab-ai-code-review/commit/d8bb599e6a048a78b6a845186e38a186d0258311)), closes [#6](https://github.com/ponomarenko/gitlab-ai-code-review/issues/6)
+
 ## [1.1.0](https://github.com/ponomarenko/gitlab-ai-code-review/compare/v1.0.1...v1.1.0) (2025-12-10)
 
 
