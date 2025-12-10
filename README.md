@@ -22,8 +22,7 @@ Intelligent code review automation for GitLab using Dify AI with RAG support for
 - [**Quick Start Guide**](QUICK_START.md) - Get started in 5 minutes
 - [**Cost Analysis**](docs/COST_ANALYSIS.md) - Detailed pricing breakdown ($0.003-0.04/file)
 - [**Knowledge Base Guide**](knowledge-base/README.md) - RAG setup and maintenance
-- [**API Documentation**](docs/API.md) - Endpoint reference
-- [**Deployment Guide**](docs/DEPLOYMENT.md) - Production deployment
+- [**CLI Documentation**](docs/CLI.md) - Command-line interface reference
 - [**FAQ**](docs/FAQ.md) - Frequently asked questions
 
 ## ✨ Features
@@ -385,9 +384,9 @@ gitlab-ai-review/
 │   │   └── review.test.js
 │   └── fixtures/
 ├── docs/
-│   ├── API.md                    # API documentation
-│   ├── DEPLOYMENT.md             # Deployment guide
-│   └── CONTRIBUTING.md           # Contributing guidelines
+│   ├── CLI.md                    # CLI documentation
+│   ├── COST_ANALYSIS.md          # Cost analysis
+│   └── FAQ.md                    # Frequently asked questions
 ├── scripts/
 │   ├── setup.sh                  # Setup script
 │   └── deploy.sh                 # Deployment script
@@ -527,11 +526,11 @@ pm2 startup
 
 ### Cloud Deployment
 
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for:
-- AWS ECS/Fargate
-- Google Cloud Run
-- Azure Container Instances
-- Kubernetes
+Deploy using Docker to various cloud platforms:
+- AWS ECS/Fargate: Use docker image with ECS task definition
+- Google Cloud Run: Deploy from container registry
+- Azure Container Instances: Use `az container create`
+- Kubernetes: Apply deployment manifests with docker image
 
 ## 🧪 Testing
 
@@ -576,7 +575,11 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 🤝 Contributing
 
-See [CONTRIBUTING.md](docs/CONTRIBUTING.md)
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes with tests
+4. Submit a pull request
 
 ## 📞 Support
 

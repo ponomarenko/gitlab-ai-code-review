@@ -12,8 +12,8 @@ Get your AI Code Review bot up and running in 5 minutes!
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-org/gitlab-ai-review.git
-cd gitlab-ai-review
+git clone https://github.com/ponomarenko/gitlab-ai-code-review.git
+cd gitlab-ai-code-review
 
 # 2. Run setup (automated)
 npm run setup
@@ -232,18 +232,29 @@ Set up monitoring with:
 
 ### 🚀 Deploy to Production
 
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for:
-- Docker deployment
-- Kubernetes setup
-- Cloud platform guides (AWS, GCP, Azure)
-- PM2 process management
+**Docker Deployment:**
+```bash
+docker build -t gitlab-ai-review:latest .
+docker run -d -p 3000:3000 --env-file .env gitlab-ai-review:latest
+```
+
+**PM2 Process Management:**
+```bash
+pm2 start ecosystem.config.js
+pm2 save && pm2 startup
+```
+
+**Cloud Platforms:**
+- **AWS**: Deploy to ECS/Fargate using docker image
+- **GCP**: Use Cloud Run with container registry
+- **Azure**: Deploy to Container Instances
 
 ## Getting Help
 
 - 📖 **Full Documentation**: See [README.md](README.md)
 - 📚 **Knowledge Base Guide**: See [knowledge-base/README.md](knowledge-base/README.md)
-- 🐛 **Report Issues**: [GitHub Issues](https://github.com/your-org/gitlab-ai-review/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/your-org/gitlab-ai-review/discussions)
+- 🐛 **Report Issues**: [GitHub Issues](https://github.com/ponomarenko/gitlab-ai-code-review/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/ponomarenko/gitlab-ai-code-review/discussions)
 
 ## Architecture Overview
 
