@@ -1,0 +1,87 @@
+# Repository Context
+
+This file provides additional context about your repository to enhance AI code review quality. The AI will use this information to provide more relevant and accurate feedback tailored to your project.
+
+## Repository Type
+monorepo
+
+<!-- Specify: monorepo, polyrepo, or library -->
+
+## Project Structure
+
+- `apps/api` - NestJS Backend-for-Frontend (BFF) API service
+- `apps/ui` - React-based user interface (client for the API)
+- `apps/admin` - Admin dashboard (internal use only)
+- `apps/ui-e2e` - E2E tests using Playwright (skip in reviews)
+- `libs/shared` - Shared utilities and types across projects
+- `libs/ui-components` - Reusable UI component library
+
+## Code Style Guidelines
+
+- Use Airbnb ESLint configuration for JavaScript/TypeScript
+- Strict TypeScript mode enabled - all types must be explicit
+- Prefer functional components and hooks in React (no class components)
+- Use async/await over Promise chains
+- Follow conventional commits specification (feat:, fix:, chore:, etc.)
+- Maximum line length: 100 characters
+- Use named exports over default exports
+
+## Review Focus Areas
+
+- **Performance is critical** for UI components - watch for unnecessary re-renders
+- **Security is critical** for API endpoints - validate all inputs, check authentication
+- **Accessibility is mandatory** for all UI components - WCAG 2.1 AA compliance required
+- Type safety is important - avoid `any` types, use proper TypeScript generics
+- Test coverage should be maintained - flag missing tests for business logic
+
+## Skip Patterns
+
+- apps/ui-e2e/** - E2E tests directory (already tested)
+- **/*.spec.ts - Unit test files (covered by test runners)
+- **/*.stories.tsx - Storybook stories (documentation files)
+- libs/legacy/** - Legacy code scheduled for removal
+- **/*.generated.ts - Auto-generated files from GraphQL/OpenAPI
+
+## Custom Instructions
+
+### API Development
+- All API endpoints must include request validation using class-validator
+- Use DTOs (Data Transfer Objects) for all request/response payloads
+- Implement proper error handling with custom exception filters
+- Database queries must be optimized - watch for N+1 query problems
+
+### Frontend Development
+- All user-facing forms must include proper error handling and loading states
+- Images must use next/image with proper width/height to prevent layout shift
+- Avoid inline styles - use CSS modules or styled-components
+- All interactive elements must be keyboard accessible
+
+### Security
+- Never log sensitive data (passwords, tokens, PII)
+- All user inputs must be sanitized before display (XSS prevention)
+- API routes must check authentication and authorization
+- Use environment variables for all secrets (never hardcode)
+
+### Performance
+- Bundle size budget: 200KB for initial load (watch for large dependencies)
+- API response time target: <200ms for standard queries
+- Use React.memo() for expensive component renders
+- Implement pagination for lists with >50 items
+
+## Technology Stack Notes
+
+- **Backend**: NestJS 10+, TypeScript, PostgreSQL, Prisma ORM
+- **Frontend**: React 18+, Next.js 14, TypeScript, TailwindCSS
+- **Testing**: Jest, React Testing Library, Playwright
+- **State Management**: Zustand (avoid Redux patterns)
+- **API Communication**: React Query for data fetching
+
+## Additional Context
+
+This is a B2B SaaS product with strict compliance requirements. Code must be:
+- Auditable (clear logging and error tracking)
+- Maintainable (well-documented complex logic)
+- Secure (follow OWASP top 10 guidelines)
+- Performant (optimize for scale)
+
+Review with focus on production-readiness and long-term maintainability.

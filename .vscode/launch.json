@@ -26,6 +26,17 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Debug CLI - Review with Context",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/src/cli.js",
+      "args": ["review", "--project", "${input:projectId}", "--mr", "${input:mrIid}", "--context", ".aicodereview", "--verbose"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "outputCapture": "std"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Debug CLI - Health Check",
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/src/cli.js",

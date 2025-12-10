@@ -1,0 +1,34 @@
+# Repository Context
+
+## Repository Type
+monorepo
+
+<!-- Options: monorepo, polyrepo, library -->
+
+## Project Structure
+
+- `src/api` - Backend API service
+- `src/ui` - Frontend application
+- `src/shared` - Shared utilities
+
+## Code Style Guidelines
+
+- Use ESLint + Prettier
+- TypeScript strict mode
+- Prefer functional patterns
+
+## Review Focus Areas
+
+- Security for API endpoints
+- Performance for UI components
+- Type safety across the codebase
+
+## Skip Patterns
+
+- **/*.test.js - Test files
+- **/dist/** - Build artifacts
+- **/*.generated.* - Auto-generated files
+
+## Custom Instructions
+
+Review with production-readiness in mind. Flag security issues and performance bottlenecks.
