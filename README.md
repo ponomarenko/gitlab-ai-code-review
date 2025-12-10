@@ -34,8 +34,13 @@ Intelligent code review automation for GitLab using Dify AI with RAG support for
   - Accessibility guidelines (WCAG)
   - Performance optimization patterns
   - Security best practices
+- 🎯 **Repository Context**: Custom context files for project-specific guidelines
+  - Monorepo/polyrepo structure awareness
+  - Project-specific code style and standards
+  - Custom skip patterns and focus areas
+  - Technology stack considerations
 - 🔄 **GitLab Webhook**: Automatic MR review triggers
-- 🎯 **Multi-Language**: Supports 15+ programming languages
+- 🌐 **Multi-Language**: Supports 15+ programming languages
 - 🔒 **Security Analysis**: Detects vulnerabilities and security issues
 - 📊 **Detailed Reports**: Comprehensive review with actionable insights
 - ⚡ **Performance**: Async processing with rate limiting
@@ -273,6 +278,38 @@ npm start
 npm run start:pm2
 ```
 
+### Repository Context Configuration
+
+Enhance code review quality by providing repository-specific context. Create a `.aicodereview` file with information about your codebase:
+
+```bash
+# Copy example template
+cp examples/.aicodereview.example .aicodereview
+
+# Edit with your repository details
+nano .aicodereview
+```
+
+The context file can include:
+- **Repository Type**: monorepo, polyrepo, or library
+- **Project Structure**: Description of directories and their purposes
+- **Code Style Guidelines**: Project-specific coding standards
+- **Review Focus Areas**: What to prioritize (performance, security, accessibility)
+- **Skip Patterns**: Additional files/folders to exclude from review
+- **Custom Instructions**: Special requirements for your team
+
+**Using context in manual reviews:**
+
+```bash
+# Trigger review with repository context
+gitlab-ai-review review -p 12345 -m 42 --context ./.aicodereview
+
+# Short form
+gitlab-ai-review review -p 12345 -m 42 -c ./.aicodereview
+```
+
+The AI will use this context to provide more relevant, project-specific feedback.
+
 ### Setup Knowledge Base (First Time)
 
 Upload best practices to Dify RAG:
@@ -386,7 +423,35 @@ gitlab-ai-review/
 ├── .dockerignore
 ├── jest.config.js
 ├── package.json
+├── examples/
+│   ├── .aicodereview.example      # Full context template
+│   └── .aicodereview.minimal      # Minimal context template
 └── README.md
+```
+
+### Repository Context File
+
+The `.aicodereview` file (optional, placed in project root) provides project-specific information to the AI:
+
+```markdown
+# Repository Context
+## Repository Type: monorepo
+## Project Structure
+- apps/api - NestJS BFF
+- apps/ui - React UI client
+## Code Style Guidelines
+- Airbnb style guide
+- Strict TypeScript mode
+## Review Focus Areas
+- Performance critical for UI
+- Security critical for API
+## Skip Patterns
+- apps/ui-e2e/** (E2E tests)
+```
+
+Use with CLI:
+```bash
+gitlab-ai-review review -p <project> -m <mr> --context ./.aicodereview
 ```
 
 ## 🛠 Development

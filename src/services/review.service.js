@@ -6,6 +6,7 @@
 const gitlabService = require('./gitlab.service');
 const difyService = require('./dify.service');
 const ragService = require('./rag.service');
+const contextParser = require('../utils/context-parser');
 const config = require('../config');
 const logger = require('../utils/logger');
 const { ReviewError } = require('../utils/errors');
@@ -20,7 +21,13 @@ class ReviewService {
    */
   async reviewMergeRequest(projectId, mrIid, options = {}) {
     const startTime = Date.now();
-    logger.info('Starting MR review', { projectId, mrIid });
+    const { repoContext } = options;
+
+    logger.info('Starting MR review', {
+      projectId,
+      mrIid,
+      hasRepoContext: !!repoContext,
+    });
 
     try {
       // Get MR and project data for file URLs
@@ -50,8 +57,8 @@ class ReviewService {
       // Get MR changes
       const changes = await gitlabService.getMergeRequestChanges(projectId, mrIid);
 
-      // Filter files to review
-      const filesToReview = this.filterFilesToReview(changes.changes);
+      // Filter files to review (with context-aware skip patterns)
+      const filesToReview = this.filterFilesToReview(changes.changes, repoContext);
 
       if (filesToReview.length === 0) {
         logger.info('No files to review', { projectId, mrIid });
@@ -70,12 +77,10 @@ class ReviewService {
       }
 
       // Review files in parallel with concurrency limit
-      const reviews = await this.reviewFilesWithConcurrency(
-        limitedFiles,
-        mrData,
-        projectData,
-        options
-      );
+      const reviews = await this.reviewFilesWithConcurrency(limitedFiles, mrData, projectData, {
+        ...options,
+        repoContext,
+      });
 
       // If no files have issues, post a simple success message
       if (reviews.length === 0) {
@@ -167,7 +172,20 @@ class ReviewService {
    * Filter files that should be reviewed
    * @private
    */
-  filterFilesToReview(changes) {
+  filterFilesToReview(changes, repoContext = null) {
+    // Merge skip patterns from config and context
+    let { skipPatterns } = config.review;
+    if (repoContext && repoContext.skipPatterns) {
+      skipPatterns = contextParser.mergeSkipPatterns(
+        config.review.skipPatterns,
+        repoContext.skipPatterns
+      );
+      logger.debug('Using merged skip patterns', {
+        total: skipPatterns.length,
+        fromContext: repoContext.skipPatterns.length,
+      });
+    }
+
     return changes.filter((change) => {
       // Skip deleted files
       if (change.deleted_file) {
@@ -175,10 +193,24 @@ class ReviewService {
       }
 
       // Skip files matching patterns
-      const shouldSkip = config.review.skipPatterns.some((pattern) => {
+      const shouldSkip = skipPatterns.some((pattern) => {
         if (pattern.includes('*')) {
-          const regex = new RegExp(pattern.replace('*', '.*'));
-          return regex.test(change.new_path);
+          try {
+            // Convert glob pattern to regex
+            // ** -> .* (match any characters including /)
+            // * -> [^/]* (match any characters except /)
+            const regexPattern = pattern
+              .replace(/\*\*/g, '§DOUBLESTAR§') // Temporarily replace **
+              .replace(/\*/g, '[^/]*') // Replace single * with [^/]*
+              .replace(/§DOUBLESTAR§/g, '.*') // Replace ** with .*
+              .replace(/\./g, '\\.'); // Escape dots
+
+            const regex = new RegExp(`^${regexPattern}$`);
+            return regex.test(change.new_path);
+          } catch (error) {
+            logger.warn('Invalid skip pattern regex', { pattern, error: error.message });
+            return false;
+          }
         }
         return change.new_path.includes(pattern);
       });
@@ -280,6 +312,7 @@ class ReviewService {
    */
   async reviewFile(change, mrData, projectData, options) {
     const { new_path: filePath, diff } = change;
+    const { repoContext } = options;
     const language = this.detectLanguage(filePath);
 
     logger.debug('Reviewing file', { filePath, language });
@@ -294,11 +327,15 @@ class ReviewService {
       // Build file URL for AI to use in responses
       const fileUrl = `${projectData.web_url}/-/blob/${mrData.sha}/${filePath}`;
 
+      // Format repository context for prompt
+      const repoContextFormatted = repoContext ? contextParser.formatForPrompt(repoContext) : null;
+
       // Analyze with Dify
       const context = {
         mrTitle: mrData.title,
         mrDescription: mrData.description,
         ragContext: ragContext?.answer,
+        repoContext: repoContextFormatted,
         conversationId: options.conversationId,
         fileUrl, // Add file URL for AI to use
       };

@@ -6,6 +6,7 @@
 const logger = require('../utils/logger');
 const reviewService = require('../services/review.service');
 const gitlabService = require('../services/gitlab.service');
+const contextParser = require('../utils/context-parser');
 const { version } = require('../../package.json');
 
 module.exports = async (options) => {
@@ -15,6 +16,7 @@ module.exports = async (options) => {
       project: options.project,
       mergeRequest: options.mr,
       force: options.force,
+      contextFile: options.context,
     });
 
     // Fetch merge request details
@@ -48,9 +50,18 @@ module.exports = async (options) => {
     //   }
     // }
 
+    // Parse repository context if provided
+    let repoContext = null;
+    if (options.context) {
+      logger.info('Loading repository context', { file: options.context });
+      repoContext = contextParser.parseContextFile(options.context);
+    }
+
     // Perform review
     logger.info('Performing code review...');
-    const result = await reviewService.reviewMergeRequest(options.project, options.mr);
+    const result = await reviewService.reviewMergeRequest(options.project, options.mr, {
+      repoContext,
+    });
 
     logger.info('Code review completed successfully', {
       filesReviewed: result.filesReviewed,

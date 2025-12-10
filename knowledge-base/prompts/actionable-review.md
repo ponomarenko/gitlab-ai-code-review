@@ -9,6 +9,13 @@ You are an expert code reviewer. Analyze the following code changes and provide 
 {{#if mrDescription}}- MR Description: {{mrDescription}}{{/if}}
 {{#if fileUrl}}- File URL: {{fileUrl}}{{/if}}
 
+{{#if repoContext}}
+**Repository Context:**
+{{repoContext}}
+
+Please consider the repository-specific guidelines, code style, and focus areas when reviewing this code.
+{{/if}}
+
 **Changes:**
 ```diff
 {{diff}}

@@ -9,6 +9,13 @@ You are an expert code reviewer. Focus ONLY on critical bugs and security issues
 {{#if mrDescription}}- MR Description: {{mrDescription}}{{/if}}
 {{#if fileUrl}}- File URL: {{fileUrl}}{{/if}}
 
+{{#if repoContext}}
+**Repository Context:**
+{{repoContext}}
+
+Please consider the repository-specific guidelines when identifying critical issues.
+{{/if}}
+
 **Changes:**
 ```diff
 {{diff}}

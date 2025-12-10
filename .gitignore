@@ -48,3 +48,6 @@ docker-compose.override.yml
 # Misc
 .temp/
 tmp/
+
+# AI Code Review context (user-specific, exclude from git)
+.aicodereview
