@@ -1,5 +1,15 @@
 # GitLab AI Code Review Bot
 
+<div align="center">
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D22.x-brightgreen?style=flat-square)](https://nodejs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![GitHub Container Registry](https://img.shields.io/badge/ghcr.io-ponomarenko%2Fgitlab--ai--code--review-blue?style=flat-square&logo=docker)](https://github.com/ponomarenko/gitlab-ai-code-review/pkgs/container/gitlab-ai-code-review)
+
+</div>
+
 Intelligent code review automation for GitLab using Dify AI with RAG support for frontend best practices.
 
 ## 📋 Table of Contents
@@ -158,6 +168,7 @@ npm run setup
 ```
 
 The setup script will:
+
 - ✅ Install dependencies
 - ✅ Create `.env` from template
 - ✅ Validate Node.js version
@@ -244,6 +255,7 @@ npm run setup:knowledge-base
 ```
 
 This script will:
+
 - Read all markdown files from `knowledge-base/` directory
 - Create a dataset in Dify
 - Upload and index all documents
@@ -252,6 +264,7 @@ This script will:
 **Manual Setup:**
 
 Alternatively, you can manually upload files from `knowledge-base/` to Dify:
+
 1. Go to Dify Console → Datasets
 2. Create new dataset: "frontend-best-practices"
 3. Upload markdown files from `knowledge-base/frontend/`
@@ -290,6 +303,7 @@ nano .aicodereview
 ```
 
 The context file can include:
+
 - **Repository Type**: monorepo, polyrepo, or library
 - **Project Structure**: Description of directories and their purposes
 - **Code Style Guidelines**: Project-specific coding standards
@@ -318,8 +332,9 @@ npm run setup:knowledge-base
 ```
 
 This uploads all files from `knowledge-base/` directory to Dify, enabling context-aware code reviews with:
+
 - ✅ React best practices
-- ✅ Vue.js patterns  
+- ✅ Vue.js patterns
 - ✅ Angular 18+ guidelines
 - ✅ Accessibility (WCAG)
 - ✅ Performance optimization
@@ -434,21 +449,31 @@ The `.aicodereview` file (optional, placed in project root) provides project-spe
 
 ```markdown
 # Repository Context
+
 ## Repository Type: monorepo
+
 ## Project Structure
+
 - apps/api - NestJS BFF
 - apps/ui - React UI client
+
 ## Code Style Guidelines
+
 - Airbnb style guide
 - Strict TypeScript mode
+
 ## Review Focus Areas
+
 - Performance critical for UI
 - Security critical for API
+
 ## Skip Patterns
-- apps/ui-e2e/** (E2E tests)
+
+- apps/ui-e2e/\*\* (E2E tests)
 ```
 
 Use with CLI:
+
 ```bash
 gitlab-ai-review review -p <project> -m <mr> --context ./.aicodereview
 ```
@@ -527,6 +552,7 @@ pm2 startup
 ### Cloud Deployment
 
 Deploy using Docker to various cloud platforms:
+
 - AWS ECS/Fargate: Use docker image with ECS task definition
 - Google Cloud Run: Deploy from container registry
 - Azure Container Instances: Use `az container create`
@@ -556,6 +582,7 @@ The application exposes metrics at `/metrics`:
 - Active connections
 
 Recommended monitoring stack:
+
 - Prometheus for metrics
 - Grafana for visualization
 - Sentry for error tracking
@@ -576,6 +603,7 @@ MIT License - see [LICENSE](LICENSE)
 ## 🤝 Contributing
 
 Contributions are welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes with tests
